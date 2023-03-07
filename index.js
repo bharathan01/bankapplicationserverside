@@ -26,7 +26,7 @@ catch{
     res.status(400).json({
         statusCode:400,
         status:false,
-        message:'please login first'
+        message:'please login first' 
     }) 
 
 }
@@ -35,34 +35,49 @@ catch{
 
 // register request 
 app.post('/register',(req,res) =>{
-    const result = dataService.register(req.body.accname,req.body.accno, req.body.pass)
+   dataService.register(req.body.accname,req.body.accno, req.body.pass).then(result =>{
     //convert js to json here result is js type object its converted to json,--want to change the status code use status(result.stauscode)methode
 
     res.status(result.statusCode).json(result)
+
+   })
+    
 })
 
 //log in request
  app.get('/login',(req ,res) =>{
-    const result = dataService.login(req.body.accno,req.body.pass)
-    res.status(result.statusCode).json(result)
+     dataService.login(req.body.accno,req.body.pass).then(result => {
+        res.status(result.statusCode).json(result) 
+
+     })
+   
 
 
  })
 // deposit
 app.get('/deposit',jwsMiddlare,(req,res) =>{
-    const result = dataService.Credit(req.body.accnoCredit, req.body.passCredit, req.body.amountCredit)
-    res.status(result.statusCode).json(result)
+    dataService.Credit(req.body.accnoCredit, req.body.passCredit, req.body.amountCredit).then(result =>{
+        res.status(result.statusCode).json(result)
+
+    })
+    
 })
 //withdrew
 app.get('/withdrew',jwsMiddlare,(req,res) =>{
-    const result = dataService.Debit(req.body.accnoDebit, req.body.passDebit, req.body.amountDabit)
-    res.status(result.statusCode).json(result)
+     dataService.Debit(req.body.accnoDebit, req.body.passDebit, req.body.amountDabit).then(result => {
+        res.status(result.statusCode).json(result)
+
+     })
+    
 })
 
 //transation 
 app.get('/transation',jwsMiddlare,(req,res) => {
-    const result = dataService. getTranstion(req.body.accountNo)
-    res.status(result.statusCode).json(result)
+    dataService. getTranstion(req.body.accountNo).then(result => {
+        res.status(result.statusCode).json(result)
+
+    })
+   
 
 })
 
