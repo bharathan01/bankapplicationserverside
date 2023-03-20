@@ -2,6 +2,8 @@
 const dataService  = require("./service/dataservice")
 //importing jsonwebtoken 
 const jwt = require("jsonwebtoken")
+//importing cors for connection to front-end
+const cors = require('cors')
 
 
 // importing express
@@ -10,13 +12,16 @@ const express = require("express")
 //creating an app to access express
 const app = express()
 
+//connection to front-end 
+app.use(cors({origin:'http://localhost:4200'}))
+
 //to parse json data from req body
 app.use(express.json())
 //middlewere
 const jwsMiddlare = (req,res,next) =>{
   try { 
     // to access data in header-  const token = req.headers['key']
-    const token = req.body.token
+    const token = req.headers['access_key']
     //verifing token in the request body
     const data = jwt.verify(token,'secretkey')
     // give next methode then only the function will exit after the token verification
@@ -45,7 +50,7 @@ app.post('/register',(req,res) =>{
 })
 
 //log in request
- app.get('/login',(req ,res) =>{
+ app.post('/login',(req ,res) =>{
      dataService.login(req.body.accno,req.body.pass).then(result => {
         res.status(result.statusCode).json(result) 
 
@@ -55,7 +60,7 @@ app.post('/register',(req,res) =>{
 
  })
 // deposit
-app.get('/deposit',jwsMiddlare,(req,res) =>{
+app.post('/deposit',jwsMiddlare,(req,res) =>{
     dataService.Credit(req.body.accnoCredit, req.body.passCredit, req.body.amountCredit).then(result =>{
         res.status(result.statusCode).json(result)
 
@@ -63,7 +68,7 @@ app.get('/deposit',jwsMiddlare,(req,res) =>{
     
 })
 //withdrew
-app.get('/withdrew',jwsMiddlare,(req,res) =>{
+app.post('/withdrew',jwsMiddlare,(req,res) =>{
      dataService.Debit(req.body.accnoDebit, req.body.passDebit, req.body.amountDabit).then(result => {
         res.status(result.statusCode).json(result)
 
@@ -72,13 +77,21 @@ app.get('/withdrew',jwsMiddlare,(req,res) =>{
 })
 
 //transation 
-app.get('/transation',jwsMiddlare,(req,res) => {
+app.post('/transation',jwsMiddlare,(req,res) => {
     dataService. getTranstion(req.body.accountNo).then(result => {
         res.status(result.statusCode).json(result)
 
     })
    
 
+})
+
+//delete
+
+app.delete('/delete/:acno',jwsMiddlare,(req,res) => {
+    dataService.Delete(req.params.acno).then(result =>{
+        res.status(result.statusCode).json(result)
+    })
 })
 
 

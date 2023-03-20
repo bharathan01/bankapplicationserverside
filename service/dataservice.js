@@ -57,7 +57,7 @@ login = (accno, pass) => {
   return db.User.findOne({ acno: accno, password: pass }).then(user => {
     if (user) {
       userName = user.username
-      userAcc = user.accno
+      userAcc = user.acno
       //creating token for the login users
       const token = jwt.sign({ userAcc }, 'secretkey')
       return {
@@ -75,7 +75,7 @@ login = (accno, pass) => {
     else {
       return {
         status: false,
-        message: 'incorrect account number or password',
+        message: 'User not found !',
         statusCode: 401
       }
 
@@ -166,6 +166,7 @@ getTranstion = (accountNo) => {
         message: 'login success',
         statusCode: 200,
         transations: user.transation
+        
 
       }
 
@@ -183,7 +184,26 @@ getTranstion = (accountNo) => {
 
 
 }
+Delete = (acno) => {
+  return db.User.deleteOne({acno}).then(user => {
+    if(user){
+      return{
+        status: true,
+        message: `Your account ${acno} is deleted`,
+        statusCode: 200
+
+      }
+    }
+    else{
+      return{
+        status: false,
+        message: 'Somthing went wrong',
+        statusCode: 401
+      }
+    }
+  })
+}
 // exporting functons
 module.exports = {
-  register, login, Credit, Debit, getTranstion
+  register, login, Credit, Debit, getTranstion,Delete
 }
